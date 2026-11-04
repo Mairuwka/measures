@@ -8,3 +8,8 @@
 1. Установите `fonts/PixelCode/PixelCode-Bold.ttf` в систему и перезапустите Figma desktop.
 2. В Figma откройте Plugins → Development → Import plugin from manifest… и выберите `figma-plugin/px-to-pixelcode/manifest.json`.
 3. Откройте страницу «Экраны для согласования» и запустите плагин. Если что-то выделено, он обработает только выделение, иначе всю страницу.
+
+## Экраны на согласование
+
+- `screens/mayor-screens.html` — все экраны, состояния и поп-апы по ТЗ (111 фреймов 1920×1080), шрифты Pixel Code и Inter. Открывается в браузере; клик по фрейму открывает его в полный размер.
+- `screens/generator/` — генератор страницы (Python): `python3 screens/generator/build.py` пересобирает HTML. Контент — в `data.py`, компоненты — в `ui.py`, стили — в `css.py`.
