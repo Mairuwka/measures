@@ -1,0 +1,8 @@
+{
+  "name": "px → Pixel Code",
+  "id": "px-to-pixelcode-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}
