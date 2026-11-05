@@ -57,6 +57,16 @@ L.scrollCards = function (cards, over) {
   cards.name = 'cards · прокрутка (видно 2 последних, ЗАМ-13)';
   const par = cards.parent; const th = L.rect(4, Math.max(20, h * 0.55), C.a2, { r: 999, name: 'scroll_thumb' }); L.abs(par, th, par.width - 4, cards.y + 4);
 };
+L.fixChip = function (ch) {
+  const iw = ch.findOne(x => x.name === 'inner_wrapper'); if (!iw) return;
+  const px = iw.children.filter(x => x.name.startsWith('px·') && x.visible);
+  if (px.length < 2) return;
+  const [lab, amt] = px; const free = iw.width - iw.paddingLeft - iw.paddingRight - iw.itemSpacing - amt.width;
+  if (lab.width <= free + 0.5) return;
+  const g = lab.findOne(x => x.name === 'glyphs'); const m = lab.name.match(/^px·([\d.]+)·(a·)?([\s\S]*)$/);
+  const n = L.px(m[3], { size: +m[1], upper: !m[2], w: free, fills: JSON.parse(JSON.stringify(g.fills)), effects: JSON.parse(JSON.stringify(g.effects)) });
+  iw.insertChild(iw.children.indexOf(lab), n); lab.remove(); n.layoutSizingHorizontal = 'FILL';
+};
 L.downBadge = n => { const ic = n.findOne(x => x.name === 'vercel-solid'); if (ic) ic.rotation = 180; return n; };
 // ---------- S-08 ----------
 // o.mode: active | wait | pause | p18 | offline | solo | obs
@@ -82,7 +92,7 @@ L.s08 = async function (cid, o = {}) {
   const chips = tc.children[1]; const tpl = chips.children[0];
   for (let i = 0; i < c.tools.length; i++) {
     const ch = tpl.clone(); chips.appendChild(ch); ch.layoutSizingHorizontal = 'FILL';
-    await L.relabel(ch, c.tools[i]); ch.name = 'Chip_secondary/initial · ' + c.tools[i][0];
+    await L.relabel(ch, c.tools[i]); ch.name = 'Chip_secondary/initial · ' + c.tools[i][0]; L.fixChip(ch);
     if (locked && !(mode === 'wait' && L.INFRA[cid] === i)) await L.disable(ch, 'chipSd');
     if (o.toolPressed === i) { const iw = ch.findOne(x => x.name === 'inner_wrapper'); iw.strokes = [solid(C.a3)]; iw.strokeWeight = 2; ch.name = ch.name.replace('/initial', '/pressed'); }
   }

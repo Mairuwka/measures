@@ -217,7 +217,7 @@ L.qa = (n, name) => n.findAll(x => x.name === name);
 // показать подпись ошибки (text_wrapper) с текстом
 L.err = async function (n, str) {
   const w = n.findOne(x => x.name === 'text_wrapper' && x.children && x.children.some(c => c.type === 'TEXT' && c.characters === 'Текст ошибки'));
-  if (!w) return n; w.visible = true;
+  if (!w) { const t0 = n.findOne(x => x.type === 'TEXT' && x.characters === 'Текст ошибки'); if (t0) { let p = t0; while (p && p !== n) { p.visible = true; p = p.parent; } await L.setT(t0, str); } return n; } w.visible = true;
   const t = w.findOne(x => x.type === 'TEXT'); if (t) await L.setT(t, str);
   return n;
 };
@@ -349,6 +349,7 @@ L.row = async (name, val, o = {}) => { // Metrick_row / Kpi_row
   if (ts[1]) await L.setT(ts[1], val);
   if (ts[2] && o.ch != null) await L.setT(ts[2], o.ch);
   if (o.zone) { const vt = L.texts(r)[1]; if (vt) { vt.fills = [solid(o.zone === 'r' ? C.err : o.zone === 'g' ? C.w : C.a3)]; vt.effects = o.zone === 'g' ? [] : vt.effects; } }
+  { const nt = L.texts(r)[0]; if (nt && nt.type === 'TEXT') { nt.layoutSizingHorizontal = 'FILL'; nt.textAutoResize = 'HEIGHT'; nt.lineHeight = { unit: 'PERCENT', value: 130 }; } r.counterAxisSizingMode = 'AUTO'; r.paddingTop = Math.max(r.paddingTop, 10); r.paddingBottom = Math.max(r.paddingBottom, 10); const sg = r.findOne(x => x.name === 'stat_badge_group'); if (sg) { sg.layoutSizingHorizontal = 'HUG'; } }
   r.name = kind + ' · ' + name;
   return r;
 };

@@ -45,7 +45,7 @@ L.sItem = async function (o) {
   const kids = [];
   const head = L.between(L.tx(o.label, { size: 16 }), o.right ? L.tx(o.right, { size: 13, wt: 'Bold', fill: C.n2 }) : null);
   kids.push(head);
-  kids.push(await L.slider(Object.assign({ w }, o.slider || {})));
+  kids.push(await L.slider(Object.assign({ w, priceW: w > 400 ? 180 : 130 }, o.slider || {})));
   if (o.preds && o.preds.length) kids.push(await L.preds(o.preds));
   if (o.note) kids.push(L.cap(o.note, { w }));
   const c = L.col(kids, { gap: 10, name: 'item · ' + o.label });
@@ -82,7 +82,7 @@ L.input = async function (o) {
   const key = { initial: 'input', hover: 'inputH', pressed: 'inputP', typing: 'inputT', error: 'inputE', disabled: 'inputD' }[o.state || 'initial'];
   const f = await L.kit(key);
   const ic = f.findOne(x => x.name === 'eye-off' || x.name === 'eye'); if (ic) ic.visible = false;
-  const t = L.texts(f).find(x => x.parent && x.parent.name === 'inner_wrapper');
+  const t = L.texts(f).find(x => x.characters !== 'Текст ошибки' && !(x.parent && x.parent.name === 'text_wrapper'));
   if (t) await L.setT(t, o.value != null ? o.value : (o.placeholder || ''));
   if (t && o.value == null && o.state !== 'disabled') { t.fills = [solid(C.n1)]; }
   for (const w of f.findAll(x => x.name === 'text_wrapper')) w.visible = false;
@@ -114,6 +114,11 @@ L.toolFoot = async function (o = {}) {
   const ap = await L.btn(o.apply || 'применить', o.applyKind || (o.disabled ? 'btnPd' : 'btnP'), { err: o.applyErr });
   const tot = L.al('V', { gap: 2, kids: [L.tx(o.totalLabel || 'итог к оплате', { size: 13, fill: C.n2 }), L.px(o.total || '0 р.', { size: 18, fill: C.a3, shadow: C.dark })] });
   const rest = L.al('V', { gap: 2, kids: [L.tx(o.restLabel || 'остаток бюджета хода', { size: 13, fill: C.n2 }), L.px(o.rest || '0 р.', { size: 18, shadow: C.n2 })] });
+  if (o.extra && o.extra.length) {
+    const top = L.al('H', { gap: 32, cross: 'CENTER', name: 'totals' }); top.appendChild(tot); top.appendChild(rest);
+    const bot = L.al('H', { gap: 12, cross: 'CENTER', name: 'buttons' }); bot.appendChild(ap); for (const e of o.extra) bot.appendChild(e);
+    const v = L.al('V', { gap: 14, name: 'footer_tool' }); v.appendChild(top); v.appendChild(bot); return v;
+  }
   const kids = [ap]; if (o.extra) for (const e of o.extra) kids.push(e);
   const r = L.al('H', { gap: 32, cross: 'CENTER', name: 'footer_tool' });
   for (const k of kids) r.appendChild(k);
@@ -132,10 +137,10 @@ L.note = (text, o = {}) => { const f = L.al('V', { gap: 6, pad: [14, 18, 14, 18]
 // раздел внутри поп-апа
 L.sec = (t, o = {}) => L.h18(t, o);
 // строка «название — значение» (Metrick_row)
-L.kv = async (name, val, ch, down) => { const r = await L.row(name, val, ch != null ? { ch, down } : {}); return r; };
+L.kv = async (name, val, ch, down) => { const r = await L.row(name, val, ch != null ? { ch, down } : {}); const sg = r.findOne(x => x.name === 'stat_badge_group'); if (sg) L.hug(sg); return r; };
 L.kvs = async (arr) => { const out = []; for (const a of arr) out.push(await L.kv(a[0], a[1], a[2], a[3])); return L.col(out, { gap: 8 }); };
 // бейдж-статус (Badge/secondary белый / Badge/primary розовый) с текстом
-L.chipTag = async (text, kind = 'badgeS') => { const b = await L.kit(kind); await L.relabel(b, [text]); return b; };
+L.chipTag = async (text, kind = 'badgeS') => { const b = await L.kit(kind); await L.relabel(b, [text]); for (const i of b.findAll(x => x.type === 'FRAME' && x.width <= 24 && x.height <= 24 && x.name !== 'inner_wrapper')) i.visible = false; L.hug(b); return b; };
 // пиксельный крупный блок значения (как Budget)
 L.bigVal = async (text, o = {}) => { const b = await L.kit('budget'); await L.relabel(b, [text]); if (o.w) { b.primaryAxisSizingMode = 'FIXED'; b.resize(o.w, b.height); b.primaryAxisAlignItems = 'CENTER'; } return b; };
 // подпись в рамке над/под экраном (аннотация для согласования)
