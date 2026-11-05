@@ -1,9 +1,10 @@
 # Симулятор мэра — материалы к макетам
 
 - `fonts/PixelCode/` — исходный шрифт интерфейса Pixel Code (Bold, Medium, Regular), лицензия SIL OFL 1.1 (`OFL-LICENSE.txt`). Источник: github.com/qwerasd205/PixelCode.
-- `figma-plugin/px-to-pixelcode/` — локальный плагин Figma. При сборке экранов в Figma через MCP шрифт Pixel Code недоступен на сервере. Поэтому изменённые тексты временно набраны Inter Bold, а их слои помечены префиксом `px·`. Плагин возвращает таким слоям Pixel Code Bold и снимает префикс.
+- `figma-plugin/px-to-pixelcode/` — локальный плагин Figma «px → Pixel Code». Экраны собираются через Figma API на сервере, где шрифта Pixel Code нет, поэтому надписи Pixel Code собраны из точных контуров этого шрифта (фреймы `px·<размер>·<текст>`). Плагин заменяет их живым текстом Pixel Code Bold с теми же размером, межстрочным, трекингом, цветом, обводкой, тенью и местом в автолейауте.
+- `figma-build/` — библиотека сборки экранов в Figma: `lib.js` (контуры Pixel Code, текст, модальные окна), `lib2.js` (составные элементы поп-апов), `lib3.js` (данные комитетов и сборка S-08), `lib4.js` (поп-апы инструментов), `glyphs.json` (контуры глифов из `PixelCode-Bold.ttf`).
 
-## Как вернуть Pixel Code
+## Как вернуть живой текст Pixel Code
 
 1. Установите `fonts/PixelCode/PixelCode-Bold.ttf` в систему и перезапустите Figma desktop.
 2. В Figma откройте Plugins → Development → Import plugin from manifest… и выберите `figma-plugin/px-to-pixelcode/manifest.json`.
