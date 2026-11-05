@@ -1,6 +1,6 @@
 async function LIB4(figma, L) {
 const C = L.C, solid = L.solid;
-L.BASE = { mig: '2056:88', edu: '2056:1619', biz: '2056:2968', urb: '2057:87', trn: '2057:1712', tur: '2057:3470' };
+L.BASE = { mig: '2070:87', edu: '2070:1618', biz: '2070:2967', urb: '2070:4669', trn: '2071:87', tur: '2071:1845' };
 // фон поп-апа: готовый S-08 комитета; tool — индекс кнопки инструмента в состоянии pressed
 L.base = async function (cid, tool) {
   const s = (await figma.getNodeByIdAsync(L.BASE[cid])).clone(); figma.currentPage.appendChild(s);
