@@ -8,7 +8,8 @@
 // размером, межстрочным, трекингом −2 %, цветом, обводкой, тенью, выравниванием
 // и местом в автолейауте.
 //
-// Работает по выделению; если ничего не выделено — по всей текущей странице.
+// Работает по выделению; если ничего не выделено — по всем страницам файла
+// (кроме служебной «_build»).
 // Шрифт Pixel Code Bold должен быть установлен на компьютере (папка fonts/PixelCode).
 const FONT = { family: 'Pixel Code', style: 'Bold' };
 // межстрочный по размеру — как на странице «Типографика»
@@ -64,7 +65,16 @@ async function convert(f) {
 (async () => {
   try { await figma.loadFontAsync(FONT); }
   catch (e) { figma.closePlugin('Шрифт Pixel Code Bold не найден. Установите его (папка fonts/PixelCode) и перезапустите Figma.'); return; }
-  const roots = figma.currentPage.selection.length ? figma.currentPage.selection : [figma.currentPage];
+  let roots = figma.currentPage.selection;
+  if (!roots.length) {
+    roots = [];
+    for (const page of figma.root.children) {
+      if (page.name.startsWith('_build')) continue;
+      await page.loadAsync();
+      roots.push(page);
+    }
+  }
+  figma.notify('px → Pixel Code: обрабатываю…', { timeout: 2000 });
   let count = 0;
   for (const root of roots) {
     const list = [];
@@ -72,5 +82,6 @@ async function convert(f) {
     if ('findAll' in root) list.push(...root.findAll(x => x.type === 'FRAME' && RE.test(x.name)));
     for (const f of list) { if (f.removed) continue; if (await convert(f)) count++; }
   }
-  figma.closePlugin(`Готово: живой текст Pixel Code — ${count} надписей`);
+  const scope = figma.currentPage.selection.length ? 'в выделении' : 'во всём файле';
+  figma.closePlugin(`Готово ${scope}: живой текст Pixel Code — ${count} надписей`);
 })();

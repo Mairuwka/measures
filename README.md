@@ -8,7 +8,7 @@
 
 1. Установите `fonts/PixelCode/PixelCode-Bold.ttf` в систему и перезапустите Figma desktop.
 2. В Figma откройте Plugins → Development → Import plugin from manifest… и выберите `figma-plugin/px-to-pixelcode/manifest.json`.
-3. Откройте страницу «Экраны для согласования» и запустите плагин. Если что-то выделено, он обработает только выделение, иначе всю страницу.
+3. Запустите плагин (Plugins → Development → px → Pixel Code). Если ничего не выделено, он обработает все страницы файла (кроме служебной «_build»), иначе только выделение.
 
 ## Экраны на согласование
 
